@@ -81,7 +81,7 @@ flowchart TB
         CLEANER["PageCleaner<br/>verified footer removal"]
         SEG["SectionSegmenter<br/>body / references spans"]
         TC["TextChunker<br/>1000 chars, 200 overlap"]
-        SAC["StructureAwareChunker<br/>headings, lists, tables, sentences"]
+        SAC["StructureAwareChunker<br/>experimental: headings, lists, tables"]
         EMB["EmbeddingModel<br/>all-MiniLM-L6-v2, 384-d"]
         STORE[("ChromaDB<br/>persistent, cosine")]
         RET["Retriever<br/>top-k + metadata filters"]
@@ -89,26 +89,31 @@ flowchart TB
 
         PDF --> LOADER --> CLEANER --> SEG
         SEG --> TC --> EMB
-        SEG -.->|"experimental path,<br/>not indexed yet"| SAC
+        SEG -.->|"experimental, not indexed"| SAC
+        SAC -.->|"not written to Chroma"| EMB
         EMB --> STORE --> RET --> EVAL
-        SAC -.->|"pipeline-compatible,<br/>no collection created"| EMB
     end
 
-    subgraph PLAN["Planned"]
+    subgraph PLAN["Planned extension"]
         direction LR
+        HYB["Hybrid retrieval<br/>+ reranking"]
         GEN["Answer generation<br/>with inline citations"]
         NLI["Claim-level NLI<br/>verification"]
         REPAIR["Bounded self-repair"]
-        HYB["Hybrid retrieval<br/>+ reranking"]
         MLOPS["Monitoring and<br/>MLOps quality gates"]
+
+        HYB -.-> GEN -.-> NLI -.-> REPAIR -.-> MLOPS
     end
 
-    RET -.-> GEN
-    GEN -.-> NLI
-    NLI -.-> REPAIR
-    REPAIR -.-> HYB
-    NLI -.-> MLOPS
-    HYB -.-> MLOPS
+    RET -.->|"retrieved candidates"| HYB
+
+    classDef implemented fill:#E3F2FD,stroke:#1565C0,stroke-width:1px,color:#0D47A1
+    classDef experimental fill:#FFF8E1,stroke:#F57F17,stroke-width:1px,color:#5D4037
+    classDef planned fill:#F3E5F5,stroke:#6A1B9A,stroke-width:1px,stroke-dasharray:4 3,color:#4A148C
+
+    class PDF,LOADER,CLEANER,SEG,TC,EMB,STORE,RET,EVAL implemented
+    class SAC experimental
+    class HYB,GEN,NLI,REPAIR,MLOPS planned
 ```
 
 **Design principles behind the architecture**
