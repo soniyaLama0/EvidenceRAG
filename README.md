@@ -676,7 +676,7 @@ AI/ML engineering portfolio project focused on trustworthy retrieval, auditable 
 - LinkedIn: [linkedin.com/in/soniyaLama0](https://www.linkedin.com/in/soniyaLama0)
 - GrowthX Off Campus
 
-Off Campus verification code: 85TDPF
+Off Campus verification code: 8STDPF
 ---
 
 *If you are reviewing this repository: the implemented scope is the evidence pipeline plus retrieval evaluation. Verification, self-repair and MLOps are documented as roadmap items, not claimed as complete.*
